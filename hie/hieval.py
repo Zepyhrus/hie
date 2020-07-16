@@ -7,7 +7,9 @@ from tqdm import tqdm
 import numpy as np
 from scipy.optimize import linear_sum_assignment as KM
 
-from .tools import iou
+import cv2
+
+from .tools import iou, imread, BLUE, GREEN, RED, YELLOW
 
 
 class HIEParams(object):
@@ -149,12 +151,8 @@ class HIEval(object):
     # loop through images, area range, max detection number
     catIds = p.catIds if p.useCats else [-1]
 
-    if p.iouType == 'segm' or p.iouType == 'bbox':
-      computeIoU = self.computeIoU
-    elif p.iouType == 'keypoints':
-      computeIoU = self.computeOks
     self.ious = {
-      (imgId, catId): computeIoU(imgId, catId) \
+      (imgId, catId): self.computeOKS(imgId, catId) \
         for imgId in p.imgIds
         for catId in catIds
     }
@@ -171,7 +169,7 @@ class HIEval(object):
     toc = time.time()
     print('DONE (t={:0.2f}s).'.format(toc-tic))
 
-  def computeIoU(self, imgId, catId):
+  def computeOKS(self, imgId, catId):
     p = self.params
     if p.useCats:
       gt = self._gts[imgId,catId]
@@ -185,67 +183,15 @@ class HIEval(object):
     dt = [dt[i] for i in inds]
     if len(dt) > p.maxDets[-1]:
       dt=dt[0:p.maxDets[-1]]
-
-    if p.iouType == 'segm':
-      g = [g['segmentation'] for g in gt]
-      d = [d['segmentation'] for d in dt]
-    elif p.iouType == 'bbox':
-      g = [g['bbox'] for g in gt]
-      d = [d['bbox'] for d in dt]
-    else:
-      raise Exception('unknown iouType for iou computation')
-
+    
     # compute iou between each dt and gt region
     iscrowd = [int(o['iscrowd']) for o in gt]
-    ious = np.zeros((len(d), len(g)))
+    ious = np.zeros((len(dt), len(gt)))
 
-    for i in range(len(d)):
-      for j in range(len(g)):
-        ious[i, j] = iou(d[i], g[j], xywh=True)
+    for i, d in enumerate(dt):
+      for j, g in enumerate(gt):
+        ious[i, j] = self.oks(g, d, method=p.iouType)
 
-    return ious
-
-  def computeOks(self, imgId, catId):
-    p = self.params
-    # dimention here should be Nxm
-    gts = self._gts[imgId, catId]
-    dts = self._dts[imgId, catId]
-    inds = np.argsort([-d['score'] for d in dts], kind='mergesort')
-    dts = [dts[i] for i in inds]
-    if len(dts) > p.maxDets[-1]:
-      dts = dts[0:p.maxDets[-1]]
-    # if len(gts) == 0 and len(dts) == 0:
-    if len(gts) == 0 or len(dts) == 0:
-      return []
-    ious = np.zeros((len(dts), len(gts)))
-
-    vars = (self.params.kpt_oks_sigmas * 2)**2
-    k = len(self.params.kpt_oks_sigmas)
-    # compute oks between each detection and ground truth object
-    for j, gt in enumerate(gts):
-      # create bounds for ignore regions(double the gt bbox)
-      g = np.array(gt['keypoints'])
-      xg = g[0::3]; yg = g[1::3]; vg = g[2::3]
-      k1 = np.count_nonzero(vg > 0)
-      bb = gt['bbox']
-      x0 = bb[0] - bb[2]; x1 = bb[0] + bb[2] * 2
-      y0 = bb[1] - bb[3]; y1 = bb[1] + bb[3] * 2
-      for i, dt in enumerate(dts):
-        d = np.array(dt['keypoints'])
-        xd = d[0::3]; yd = d[1::3]
-        if k1>0:
-          # measure the per-keypoint distance if keypoints visible
-          dx = xd - xg
-          dy = yd - yg
-        else:
-          # measure minimum distance to keypoints in (x0,y0) & (x1,y1)
-          z = np.zeros((k))
-          dx = np.max((z, x0-xd),axis=0)+np.max((z, xd-x1),axis=0)
-          dy = np.max((z, y0-yd),axis=0)+np.max((z, yd-y1),axis=0)
-        e = (dx**2 + dy**2) / vars / (gt['area']+np.spacing(1)) / 2
-        if k1 > 0:
-          e = e[vg > 0]
-        ious[i, j] = np.sum(np.exp(-e)) / e.shape[0]
     return ious
 
   def evaluateImg(self, imgId, catId, aRng, maxDet):
@@ -649,7 +595,7 @@ class HIEval(object):
       img_ids = sorted(img_ids)
 
     for img_id in img_ids:
-      img = cv2.imread(f'data/hie/images/train/{img_id}.jpg')
+      img = imread(f'data/hie/images/train/{img_id}.jpg')
 
       _match = self.MATCH[img_id]
 
@@ -689,15 +635,14 @@ class HIEval(object):
       cv2.imshow('_', img)
       if cv2.waitKey(0) == 27: break
   
-  @classmethod
-  def oks(cls, gt, dt, method='keypoints'):
+  def oks(self, gt, dt, method='keypoints'):
     '''
     calculate IOU/OKS between specific ground truth and detection
     '''
     if method == 'bbox':
       return iou(gt['bbox'], dt['bbox'], xywh=True)
     elif method == 'keypoints':
-      var = (cls._sigmas * 2) ** 2
+      var = (self.params.kpt_oks_sigmas * 2) ** 2
 
       g = np.array(gt['keypoints'])
       xg = g[0::3]; yg = g[1::3]; vg = g[2::3]
@@ -712,7 +657,7 @@ class HIEval(object):
       if k1 > 0:
         dx = xd - xg; dy = yd - yg
       else:
-        z = np.zeros((len(cls._sigmas)))
+        z = np.zeros((len(self.params.kpt_oks_sigmas)))
         dx = np.max((z, x0-xd), axis=0)+np.max((z, xd-x1), axis=0)
         dy = np.max((z, y0-yd), axis=0)+np.max((z, yd-y1), axis=0)
 
@@ -727,8 +672,7 @@ class HIEval(object):
     else:
       raise NotImplementedError("IOU method not implemented!")
 
-  @classmethod
-  def metric_by_frame(cls, gts, dts, method='keypoints'):
+  def metric_by_frame(self, gts, dts, method='keypoints'):
     """
       return matched ground truth and detects with only scores exceeding 0.5 OKS
     """
@@ -740,7 +684,7 @@ class HIEval(object):
 
     for i in range(len(gts)):
       for j in range(len(dts)):
-        metric[i, j] = cls.oks(gts[i], dts[j], method)
+        metric[i, j] = self.oks(gts[i], dts[j], method)
 
 
     gt_idx, dt_idx = KM(metric, maximize=True)

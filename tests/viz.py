@@ -9,16 +9,18 @@ from hie.hieval import HIEval
 
 if __name__ == "__main__":
   gt = HIE('data/hie/labels/hie.val.ann.json')
-  dt = HIE('/home/ubuntu/Workspace/PoseBenchmark/backup/0520/0515_val_iou_0.5_thresh_0.4_float_.json')
+  dt = HIE('/home/ubuntu/Workspace/PoseBenchmark/det.json')
 
-  hie_eval = HIEval(gt, dt, 'bbox')
+  hie_eval = HIEval(gt, dt, 'keypoints')
 
   hie_eval.evaluate()
   hie_eval.accumulate()
   hie_eval.summarize()
 
-  # msg, _ = hie_eval.new_summ()
-  # print(msg)
+  msg, _ = hie_eval.new_summ()
+  print(msg)
+
+  hie_eval.viz(show_bbox=True)
 
 
 
