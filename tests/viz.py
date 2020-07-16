@@ -1,3 +1,5 @@
+import argparse
+
 import cv2
 
 from hie.tools import imread
@@ -5,13 +7,19 @@ from hie.hie import HIE
 from hie.hieval import HIEval
 
 
+parser = argparse.ArgumentParser(description='test for hie module')
+parser.add_argument('--ground-truth', '-g', dest='gt', type=str, default='data/hie/labels/hie.val.ann.json')
+parser.add_argument('--detect-result', '-d', dest='dt', type=str, default='/home/ubuntu/Workspace/PoseBenchmark/det.json')
+parser.add_argument('--type', '-t', type=str, default='bbox')
+parser.add_argument('--visualization', '-v', default=False, action='store_true')
+args = parser.parse_args()
+
 
 
 if __name__ == "__main__":
-  gt = HIE('data/hie/labels/hie.val.ann.json')
-  dt = HIE('/home/ubuntu/Workspace/PoseBenchmark/det.json')
-
-  hie_eval = HIEval(gt, dt, 'keypoints')
+  gt = HIE(args.gt)
+  dt = HIE(args.dt)
+  hie_eval = HIEval(gt, dt, args.type)
 
   hie_eval.evaluate()
   hie_eval.accumulate()
@@ -20,7 +28,8 @@ if __name__ == "__main__":
   msg, _ = hie_eval.new_summ()
   print(msg)
 
-  hie_eval.viz(show_bbox=True)
+  if args.visualization:
+    hie_eval.viz(show_bbox=True)
 
 
 
