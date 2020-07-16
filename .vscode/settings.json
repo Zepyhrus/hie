@@ -1,0 +1,18 @@
+{
+  "python.pythonPath": "/home/ubuntu/anaconda3/envs/efficientdet/bin/python",
+  "files.watcherExclude": {
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true,
+    "**/node_modules/**": true,
+    "**/.hg/store/**": true,
+    "**/data/**": true,
+  },
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "**/*.zip": true
+  }
+}
