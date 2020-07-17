@@ -19,6 +19,11 @@ args = parser.parse_args()
 if __name__ == "__main__":
   gt = HIE(args.gt)
   dt = HIE(args.dt)
+
+  num_instances = [len(dt.getAnnIds([_])) for _ in dt.getImgIds()]
+
+  print(f'Maximum number of instances in detection is: {max(num_instances)}.')
+
   hie_eval = HIEval(gt, dt, args.type)
 
   hie_eval.evaluate()
