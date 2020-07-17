@@ -1,10 +1,21 @@
 # hie
 A repository inherited from COCO-api, for person detection/pose estimation benchmark.
 
-This is an unofficial re-implementation of COCO-api, for the sake of solving the limitation of COCO-api including:
-* The greedy matching seems to cause problem in matching process;
-* Maximum detection is limited to 20 for keypoints/100 for detection validation;
-* Parameters are casted implicitly in evaluation api;
-* No visualization function;
-* Other few tools maybe used in benchmark;
+## Intro
 
+This is an unofficial re-implementation of COCO-api.
+
+**Why do we need another version of COCO-api?**: For the sake of solving the limitation of COCO-api including:
+* The greedy-search matching, used in COCO api seems to cause problem in matching process;
+* Maximum detection is limited to 20 for keypoints/100 for detection validation;
+* Parameters are casted implicitly in evaluation api, very hard to re-implement to adapt to different datasets;
+* No visualization function;
+* Add few tools maybe used in benchmark;
+
+
+
+## How-to-use-it
+
+**Main functions**: Basically, **hie** project inherits from COCO-api, it contains every function included in COCO and also the original evaluation method in COCO.
+
+**tools**: Some basic simple functions often used in objection detction/pose estimation benchmark.

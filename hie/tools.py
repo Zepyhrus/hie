@@ -1,4 +1,4 @@
-
+import json
 import numpy as np
 
 import cv2
@@ -21,12 +21,29 @@ PAIRS = [
   [  9,   6 ], [  6,   0 ]
 ]
 
+JOINTS = [
+  'Nose'            , 'Chest'         ,
+  'Right-shoulder'  , 'Right-elbow'   , 'Right-wrist',
+  'Left-shoulder'   , 'Left-elbow'    , 'Left-wrist',
+  'Right-hip'       , 'Right-knee'    , 'Right-ankle',
+  'Left-hip'        , 'Left-knee'     , 'Left-ankle'
+]
+
+
 def imread(image):
   try:
     with open(image, 'rb') as _i:
       return TurboJPEG.decode(_i.read())
   except:
     return cv2.imread(image)
+
+
+def jsload(src):
+  return json.load(open(src, 'r'))
+
+
+def jsdump(data, dst):
+  return json.dump(data, open(dst, 'w'))
 
 
 def iou(box1, box2, xywh=False):
