@@ -19,3 +19,16 @@ This is an unofficial re-implementation of COCO-api.
 **Main functions**: Basically, **hie** project inherits from COCO-api, it contains every function included in COCO and also the original evaluation method in COCO.
 
 **tools**: Some basic simple functions often used in objection detction/pose estimation benchmark.
+
+
+
+
+
+## Versions
+
+**0.1.0**: Initialization;
+
+**0.1.1**: Replace original COCO-api: ComputeIOU with HIE-api: oks;
+
+**0.1.2**: Fix `HIE.load_res`: `missing time.time` bug;
+
