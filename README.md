@@ -32,5 +32,7 @@ This is an unofficial re-implementation of COCO-api.
 
 **0.1.1**: Replace original COCO-api: ComputeIOU with HIE-api: oks;
 
-**0.1.2**: Fix `HIE.load_res`: `missing time.time` bug;
+**0.1.2**: Add test functions;
+
+**0.1.3**: Fix `time` and `copy` bug;
 
