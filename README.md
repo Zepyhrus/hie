@@ -26,6 +26,8 @@ This is an unofficial re-implementation of COCO-api.
 
 ## Versions
 
+**0.0.0**: The original version was derived from PoseBenchmark project;
+
 **0.1.0**: Initialization;
 
 **0.1.1**: Replace original COCO-api: ComputeIOU with HIE-api: oks;
