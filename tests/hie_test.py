@@ -22,7 +22,7 @@ import argparse
 
 import cv2
 
-from hie.tools import imread, jsdump
+from hie.tools import imread, jsdump, jsload
 from hie.hie import HIE
 from hie.hieval import HIEval
 
@@ -61,6 +61,7 @@ if __name__ == "__main__":
 
   # load_res
   dt = gt.load_res('data/det.res.json')
+  dt = gt.load_res(jsload('data/det.res.json'))
 
   
 
