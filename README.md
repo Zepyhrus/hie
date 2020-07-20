@@ -37,3 +37,5 @@ This is an unofficial re-implementation of COCO-api.
 **0.1.3**: Fix `time` and `copy` bug;
 
 **0.1.4**: Fix `PYTHONVERSION` bug;
+
+**0.1.5**: Add `HIE.load_res()` test;
