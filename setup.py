@@ -1,5 +1,6 @@
-import setuptools
+from hie.hie import __version__, __author__
 
+import setuptools
 
 with open("README.md", "r") as fh:
   long_description = fh.read()
@@ -7,8 +8,8 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
   name="hie",
-  version="0.1.3",
-  author="sherk",
+  version=__version__,
+  author=__author__,
   author_email="sherkfung@gmail.com",
   description="A heritance of COCO-api with binary matching",
   long_description=long_description,

@@ -1,5 +1,5 @@
 __author__ = 'sherk'
-__version__ = '0.1.3'
+__version__ = '0.1.5'
 """
 
 """
@@ -12,6 +12,8 @@ import itertools
 import random
 import time
 import copy
+
+import numpy as np
 
 import cv2
 
@@ -233,7 +235,7 @@ class HIE(object):
 
     # print('Loading and preparing results...')
     tic = time.time()
-    if type(resFile) == str or (PYTHON_VERSION == 2 and type(resFile) == unicode):
+    if type(resFile) == str:
       anns = json.load(open(resFile))
     elif type(resFile) == np.ndarray:
       anns = self.loadNumpyAnnotations(resFile)

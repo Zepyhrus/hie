@@ -62,6 +62,10 @@ if __name__ == "__main__":
   # load_res
   dt = gt.load_res('data/det.res.json')
   dt = gt.load_res(jsload('data/det.res.json'))
+  print('-------------- load_res test finished! -------------')
+
+
+  print('============== HIE module test passed! =============')
 
   
 
