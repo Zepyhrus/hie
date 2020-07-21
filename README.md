@@ -39,3 +39,11 @@ This is an unofficial re-implementation of COCO-api.
 **0.1.4**: Fix `PYTHONVERSION` bug;
 
 **0.1.5**: Add `HIE.load_res()` test;
+
+
+## TODOs
+
+1. Add function return absolute paths of all images;
+2. Add `mot` support;
+  * `_get_abs_name` support for mot;
+  * remove `hieval` for dataset format;
