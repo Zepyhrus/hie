@@ -42,4 +42,3 @@ This is an unofficial re-implementation of COCO-api.
 
 
 ## TODOs
-
