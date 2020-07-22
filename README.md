@@ -43,7 +43,3 @@ This is an unofficial re-implementation of COCO-api.
 
 ## TODOs
 
-1. Add function return absolute paths of all images;
-2. Add `mot` support;
-  * `_get_abs_name` support for mot;
-  * remove `hieval` for dataset format;

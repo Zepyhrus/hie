@@ -1,5 +1,5 @@
 __author__ = 'sherk'
-__version__ = '0.1.5'
+__version__ = '0.1.6'
 """
 
 """
@@ -45,14 +45,19 @@ class HIE(object):
       self.createIndex()
     
   def _get_abs_name(self, image_id):
+    def _get_abs_name(self, image_id):
     if self.orm == 'hie':
       return f'data/hie/images/train/{image_id}.jpg'
     elif self.orm == 'cpose':
       return f'data/cpose/images/{image_id}.jpg'
     elif self.orm == 'coco':
       return f'data/coco/train2017/{image_id:012d}.jpg'
-    elif self.orm == 'hieval':
-      return f'data/hie/images/val/{image_id}.jpg'
+    elif self.orm == 'mot':
+      return f'data/mot/images/{image_id}.jpg'
+    elif self.orm == 'chuman':
+      return f'data/chuman/images/{image_id}.jpg'
+    elif self.orm == 'seed':
+      return f'data/seed/images/{image_id}.jpg'
     else:
       raise NotImplementedError('Current dataset is not implemented!')
 
