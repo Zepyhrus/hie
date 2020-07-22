@@ -45,7 +45,6 @@ class HIE(object):
       self.createIndex()
     
   def _get_abs_name(self, image_id):
-    def _get_abs_name(self, image_id):
     if self.orm == 'hie':
       return f'data/hie/images/train/{image_id}.jpg'
     elif self.orm == 'cpose':
