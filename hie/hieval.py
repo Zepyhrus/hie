@@ -583,7 +583,7 @@ class HIEval(object):
     return self.cocoGt.load_res(combined_anns)
     
     
-  def viz(self, img_ids=[], show_bbox=False, shuffle=False, thresh=0.75):
+  def viz(self, img_ids=[], show_bbox=False, shuffle=False, thresh=0.75, resize=True):
     self.__check_evaluated()
 
     if len(img_ids) == 0:
@@ -626,12 +626,11 @@ class HIEval(object):
 
         img = self.cocoDt.viz_anns(img, [dt], color=RED, show_bbox=show_bbox)
 
-      if img.shape[0] * img.shape[1] < 640 * 480:
-        img = cv2.resize(img, (img.shape[1]*2, img.shape[0]*2))
-      elif img.shape[0] * img.shape[1] > 1440 * 1080:
-        img = cv2.resize(img, (img.shape[1]*2//3, img.shape[0]*2//3))
+      if resize:
+        scale = np.sqrt(img.shape[0] * img.shape[1] / 960 / 810)
+        img = cv2.resize(img, (int(img.shape[1]/scale), int(img.shape[0]/scale)))
 
-      print(img_id)
+      print('Image id: ' + img_id)
       cv2.imshow('_', img)
       if cv2.waitKey(0) == 27: break
   

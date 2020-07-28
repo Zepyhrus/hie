@@ -26,9 +26,9 @@ class HIE(object):
   def __init__(self, annotation_file=None, dataset='hie'):
     """
     Constructor of Microsoft COCO helper class for reading and visualizing annotations.
-    :param annotation_file (str): location of annotation file
-    :param image_folder (str): location to the folder that hosts images.
-    :return:
+      :param annotation_file (str): location of annotation file
+      :param image_folder (str): location to the folder that hosts images.
+      :return
     """
     # load dataset
     self.dataset, self.anns, self.cats, self.imgs = dict(), dict(), dict(), dict()
@@ -71,6 +71,7 @@ class HIE(object):
   
   def _validate(self):
     """
+    validate keypoints in the bbox or not
     """
     for ann in self.dataset['annotations']:
       x, y, w, h = ann['bbox']
@@ -84,6 +85,11 @@ class HIE(object):
         if not ((x-w*0.1 < _x < x+w*1.1) and (y-h*0.1 < _y < y+h*1.1)):
           print('[WRN]: ', ann['image_id'], ' @ ', i)
   
+  @property
+  def img_files(self):
+    return [self._get_abs_name(_) for _ in self.getImgIds()]
+
+
   def createIndex(self):
     # create index
     anns, cats, imgs = {}, {}, {}
@@ -344,7 +350,7 @@ class HIE(object):
 
     return new_img
   
-  def viz(self, imgIds=[], thresh=0.05, dataset='hie', show_bbox=False, color=None, pause=0, shuffle=False):
+  def viz(self, imgIds=[], thresh=0.05, dataset='hie', show_bbox=False, color=None, pause=0, shuffle=False, resize=True):
     if not imgIds:
       imgIds = self.getImgIds()
     
@@ -368,10 +374,9 @@ class HIE(object):
 
       img = self.viz_anns(img, anns=anns, thresh=thresh, show_bbox=show_bbox, color=color, size=2)
 
-      if img.shape[0] * img.shape[1] < 640 * 480:
-        img = cv2.resize(img, (img.shape[1]*2, img.shape[0]*2))
-      elif img.shape[0] * img.shape[1] > 1440 * 1080:
-        img = cv2.resize(img, (img.shape[1]*2//3, img.shape[0]*2//3))
+      if resize:
+        scale = np.sqrt(img.shape[0] * img.shape[1] / 960 / 810)
+        img = cv2.resize(img, (int(img.shape[1]/scale), int(img.shape[0]/scale)))
       
       cv2.imshow('_', img)
       if cv2.waitKey(pause) == 27: break

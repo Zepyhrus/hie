@@ -40,5 +40,10 @@ This is an unofficial re-implementation of COCO-api.
 
 **0.1.5**: Add `HIE.load_res()` test;
 
+**0.1.6**: Add `img_files` and a scalable `viz` function for `HIE` and `HIEval`;
+
 
 ## TODOs
+
+1. Add evaluation for tracking;
+

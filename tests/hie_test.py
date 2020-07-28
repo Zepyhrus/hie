@@ -1,7 +1,7 @@
 """
 This is the module test script. All modules need to be tested including:
 * HIE.__init__(self, annotation_file, dataset);
-* HIE._get_abs_name(self, image_id);
+* HIE._get_abs_name(self, image_id): included in self.img_files;
 * HIE._strip(self);
 * HIE._validate(self);
 * HIE.createIndex(self): included in __init__();
@@ -22,13 +22,13 @@ import argparse
 
 import cv2
 
-from hie.tools import imread, jsdump, jsload
+from hie.tools import imread, jsdump, jsload, GREEN
 from hie.hie import HIE
 from hie.hieval import HIEval
 
 
 parser = argparse.ArgumentParser(description='test for hie module')
-parser.add_argument('--ground-truth', '-g', dest='gt', type=str, default='data/hie/labels/hie.val.ann.json')
+parser.add_argument('--ground-truth', '-g', dest='gt', type=str, default='data/hie/labels/competition/hie.val.ann.json')
 parser.add_argument('--detect', '-d', dest='dt', type=str, default='data/det.json')
 parser.add_argument('--type', '-t', type=str, default='bbox')
 parser.add_argument('--visualization', '-v', default=False, action='store_true')
@@ -38,8 +38,7 @@ args = parser.parse_args()
 if __name__ == "__main__":
   # __init__
   gt = HIE(args.gt)
-
-  # _get_abs_name
+  print('-------------- __init__ test finished! -------------')
 
   # _strip
 
@@ -63,6 +62,17 @@ if __name__ == "__main__":
   dt = gt.load_res('data/det.res.json')
   dt = gt.load_res(jsload('data/det.res.json'))
   print('-------------- load_res test finished! -------------')
+
+
+  # property: img_files
+  print(len(gt.img_files))
+  print('-------------- img_files test finished! -------------')
+
+
+
+  # viz
+  gt.viz(show_bbox=True, pause=1, color=GREEN)
+  print('-------------- viz test finished! -------------')
 
 
   print('============== HIE module test passed! =============')
