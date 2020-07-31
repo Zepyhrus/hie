@@ -71,7 +71,7 @@ if __name__ == "__main__":
 
 
   # viz
-  gt.viz(show_bbox=True, pause=1, color=GREEN)
+  gt.viz(show_bbox=True, pause=1, color=GREEN, show_bbox_only=False)
   print('-------------- viz test finished! -------------')
 
 

@@ -44,8 +44,16 @@ This is an unofficial re-implementation of COCO-api.
 
 **0.1.7**: Add `img_files` and a scalable `viz` function for `HIE` and `HIEval`;
 
+**0.1.8**: 
+1. Add show_bbox only for viz_ann funciton;
+2. Fix HIEval viz bug: always loading hie dataset images;
+
+**0.1.9**:
+1. Fix HIEval viz bug: no show_bbox_only; 
+
 
 ## TODOs
 
 1. Add evaluation for tracking;
+
 

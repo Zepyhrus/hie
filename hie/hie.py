@@ -1,5 +1,5 @@
 __author__ = 'sherk'
-__version__ = '0.1.7'
+__version__ = '0.1.8'
 """
 
 """
@@ -302,7 +302,7 @@ class HIE(object):
     
     print('This function is not implemented yet!')
 
-  def viz_anns(self, img, anns=[], thresh=0.05, color=None, show_bbox=False, size=1):
+  def viz_anns(self, img, anns=[], thresh=0.05, color=None, show_bbox=False, show_bbox_only=True, size=1):
     if 'skeleton' in self.cats[1]:
       limbs = self.cats[1]['skeleton']
     else:
@@ -320,37 +320,38 @@ class HIE(object):
 
         cv2.rectangle(new_img, (x, y), (x+w, y+h), _color, 1)
 
-      if 'keypoints' in ann:
-        xs = [int(_) for _ in ann['keypoints'][0::3]]
-        ys = [int(_) for _ in ann['keypoints'][1::3]]
-        vs = ann['keypoints'][2::3]
+      if not show_bbox_only:
+        if 'keypoints' in ann:
+          xs = [int(_) for _ in ann['keypoints'][0::3]]
+          ys = [int(_) for _ in ann['keypoints'][1::3]]
+          vs = ann['keypoints'][2::3]
 
-        for i, (x, y, v) in enumerate(zip(xs, ys, vs)):
-          # if i == 0 and 'name' in ann:
-          #   name = ann['name'].split('-')[-1]
-          #   cv2.putText(new_img, name, (x, y), 0, 0.5, _color, 1)
+          for i, (x, y, v) in enumerate(zip(xs, ys, vs)):
+            # if i == 0 and 'name' in ann:
+            #   name = ann['name'].split('-')[-1]
+            #   cv2.putText(new_img, name, (x, y), 0, 0.5, _color, 1)
 
-          # if i == 1 and 'score' in ann:
-          #   cv2.putText(new_img, '%.2f'%ann['score'], (x, y), 0, 0.5, _color, 1)
-          
-          if v > thresh:
-            if i in [2, 3, 4, 8, 9, 10]:
-              cv2.circle(new_img, (x, y), 0, _color, 6)
-            else:
-              cv2.circle(new_img, (x, y), 0, _color, 2)
-            # cv2.putText(new_img, str('%d:%.2f' % (i, v)), (x, y), 0, 0.5, _color, 1)
+            # if i == 1 and 'score' in ann:
+            #   cv2.putText(new_img, '%.2f'%ann['score'], (x, y), 0, 0.5, _color, 1)
             
-          
-        for limb in limbs:
-          if vs[limb[0]] > thresh and vs[limb[1]] > thresh:
-            st = (xs[limb[0]], ys[limb[0]])
-            ed = (xs[limb[1]], ys[limb[1]])
+            if v > thresh:
+              if i in [2, 3, 4, 8, 9, 10]:
+                cv2.circle(new_img, (x, y), 0, _color, 6)
+              else:
+                cv2.circle(new_img, (x, y), 0, _color, 2)
+              # cv2.putText(new_img, str('%d:%.2f' % (i, v)), (x, y), 0, 0.5, _color, 1)
+              
             
-            cv2.line(new_img, st, ed, _color, size)
+          for limb in limbs:
+            if vs[limb[0]] > thresh and vs[limb[1]] > thresh:
+              st = (xs[limb[0]], ys[limb[0]])
+              ed = (xs[limb[1]], ys[limb[1]])
+              
+              cv2.line(new_img, st, ed, _color, size)
 
     return new_img
   
-  def viz(self, imgIds=[], thresh=0.05, dataset='hie', show_bbox=False, color=None, pause=0, shuffle=False, resize=True):
+  def viz(self, imgIds=[], thresh=0.05, dataset='hie', show_bbox=False, show_bbox_only=True, color=None, pause=0, shuffle=False, resize=True):
     if not imgIds:
       imgIds = self.getImgIds()
     
@@ -372,7 +373,7 @@ class HIE(object):
       else:
         raise NotImplementedError(f'current dataset {dataset} is not implemented!')
 
-      img = self.viz_anns(img, anns=anns, thresh=thresh, show_bbox=show_bbox, color=color, size=2)
+      img = self.viz_anns(img, anns=anns, thresh=thresh, show_bbox=show_bbox, show_bbox_only=show_bbox_only, color=color, size=2)
 
       if resize:
         scale = np.sqrt(img.shape[0] * img.shape[1] / 960 / 810)

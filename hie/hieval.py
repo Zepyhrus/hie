@@ -583,8 +583,14 @@ class HIEval(object):
     return self.cocoGt.load_res(combined_anns)
     
     
-  def viz(self, img_ids=[], show_bbox=False, shuffle=False, thresh=0.75, resize=True):
+  def viz(self, img_ids=[], show_bbox=False, show_bbox_only=True, shuffle=False, thresh=0.75, resize=True):
     self.__check_evaluated()
+
+    if self.iou_type == 'bbox' and not show_bbox:
+      print('[WRN]: IoU type bbox but not showing bbox!')
+
+    if show_bbox_only and not show_bbox:
+      print('[WRN]: Not showing anything!')
 
     if len(img_ids) == 0:
       img_ids = self.cocoGt.getImgIds()
@@ -595,7 +601,7 @@ class HIEval(object):
       img_ids = sorted(img_ids)
 
     for img_id in img_ids:
-      img = imread(f'data/hie/images/train/{img_id}.jpg')
+      img = imread(self.cocoGt._get_abs_name(img_id))
 
       _match = self.MATCH[img_id]
 
@@ -608,23 +614,23 @@ class HIEval(object):
         dt = self.cocoDt.loadAnns([_di])[0]
 
         if _s >= thresh:
-          img = self.cocoGt.viz_anns(img, [gt], color=BLUE, show_bbox=show_bbox)
-          img = self.cocoDt.viz_anns(img, [dt], color=YELLOW, show_bbox=show_bbox)
+          img = self.cocoGt.viz_anns(img, [gt], color=BLUE, show_bbox=show_bbox, show_bbox_only=show_bbox_only)
+          img = self.cocoDt.viz_anns(img, [dt], color=YELLOW, show_bbox=show_bbox, show_bbox_only=show_bbox_only)
         else:
-          img = self.cocoGt.viz_anns(img, [gt], color=GREEN, show_bbox=show_bbox)
-          img = self.cocoDt.viz_anns(img, [dt], color=RED, show_bbox=show_bbox)
+          img = self.cocoGt.viz_anns(img, [gt], color=GREEN, show_bbox=show_bbox, show_bbox_only=show_bbox_only)
+          img = self.cocoDt.viz_anns(img, [dt], color=RED, show_bbox=show_bbox, show_bbox_only=show_bbox_only)
 
       for gt in self.cocoGt.loadAnns(self.cocoGt.getAnnIds([img_id])):
         if gt['id'] in _matched_gt:
           continue
 
-        img = self.cocoGt.viz_anns(img, [gt], color=GREEN, show_bbox=show_bbox)
+        img = self.cocoGt.viz_anns(img, [gt], color=GREEN, show_bbox=show_bbox, show_bbox_only=show_bbox_only)
       
       for dt in self.cocoDt.loadAnns(self.cocoDt.getAnnIds([img_id])):
         if dt['id'] in _matched_dt:
           continue
 
-        img = self.cocoDt.viz_anns(img, [dt], color=RED, show_bbox=show_bbox)
+        img = self.cocoDt.viz_anns(img, [dt], color=RED, show_bbox=show_bbox, show_bbox_only=show_bbox_only)
 
       if resize:
         scale = np.sqrt(img.shape[0] * img.shape[1] / 960 / 810)
